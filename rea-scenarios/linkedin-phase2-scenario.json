@@ -1,0 +1,36 @@
+{
+  "browser": {
+    "mode": "launch",
+    "executable_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "headless": true
+  },
+  "start_url": {
+    "url": "https://www.linkedin.com/"
+  },
+  "actions": [
+    {
+      "step_id": "initial_page_load",
+      "action": "wait_for_timeout",
+      "duration_ms": 8000
+    },
+    {
+      "step_id": "wait_for_js_execution",
+      "action": "wait_for_timeout",
+      "duration_ms": 6000
+    },
+    {
+      "step_id": "wait_for_all_analytics",
+      "action": "wait_for_timeout",
+      "duration_ms": 5000
+    }
+  ],
+  "capture": {
+    "after_each_step": ["dom", "screenshot", "url"],
+    "at_end": ["dom", "screenshot", "url", "storage"],
+    "network": {
+      "request_body": true,
+      "response_body": true,
+      "header_values": true
+    }
+  }
+}

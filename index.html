@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn: Log In or Sign Up | OpenToNetwork</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="manifest" href="/homepage-guest/manifest.json">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            li: {
+              blue: '#0a66c2', hover: '#004182', bg: '#f3f2f0',
+              border: '#e0dfdc', text: '#191919', muted: '#666666'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { background: #f3f2f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #191919; }
+    .nav-active { color: #191919 !important; border-bottom: 2px solid #191919; }
+    .modal-bg { background: rgba(0,0,0,0.6); }
+    #toast { transition: opacity 0.3s; }
+    .skeleton { background: linear-gradient(90deg, #e8e8e8 25%, #f5f5f5 50%, #e8e8e8 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .feed-post { animation: fadeUp 0.3s ease; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background:#ccc; border-radius:3px; }
+    .search-tab { background: #f3f2f0; color: #666; } .search-tab-active { background: #0a66c2 !important; color: #fff !important; }
+    .msg-mine { background: #e3f0ff; margin-left: auto; } .msg-theirs { background: #fff; margin-right: auto; }
+    .comment-item { animation: fadeUp 0.2s ease; }
+    .reaction-picker { display: none; position: absolute; bottom: 100%; left: 0; background: white; border-radius: 9999px; box-shadow: 0 6px 16px rgba(0,0,0,0.18); border: 1px solid #e0dfdc; padding: 4px 10px; z-index: 50; animation: popUp 0.15s ease-out; }
+    .reaction-trigger:hover .reaction-picker, .reaction-picker:hover { display: flex; }
+    @keyframes popUp { from { opacity: 0; transform: translateY(8px) scale(0.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .reaction-icon { transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+    .reaction-icon:hover { transform: scale(1.4) translateY(-4px); }
+    .otw-avatar-ring { box-shadow: 0 0 0 3px #057642; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<!-- ══════════════════════════════════════════ -->
+<!--  TOAST NOTIFICATION                        -->
+<!-- ══════════════════════════════════════════ -->
+<div id="toast" class="fixed top-4 right-4 z-[200] bg-[#191919] text-white text-sm px-4 py-3 rounded-lg shadow-xl opacity-0 pointer-events-none max-w-xs"></div>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  AUTH SCREEN (shown when logged out)        -->
+<!-- ══════════════════════════════════════════ -->
+<div id="authScreen" class="hidden min-h-screen bg-[#f3f2f0] flex flex-col font-sans">
+
+  <!-- Auth Header with Official LinkedIn Logo -->
+  <header class="bg-white border-b border-li-border px-6 py-3 flex items-center justify-between sticky top-0 z-40">
+    <div class="flex items-center space-x-2">
+      <img src="/images/asset_7.svg" alt="LinkedIn" class="h-6 w-auto">
+    </div>
+    <div class="flex items-center space-x-4 text-sm font-semibold">
+      <a href="#explore-top-content" class="text-li-muted hover:text-li-text hidden md:inline" data-tracking-control-name="guest_homepage-basic_guest_nav_menu_topContent">Articles</a>
+      <a href="#" onclick="switchAuthTab('login')" class="text-li-muted hover:text-li-text hidden md:inline" data-tracking-control-name="guest_homepage-basic_guest_nav_menu_people">People</a>
+      <a href="#" onclick="switchAuthTab('login')" class="text-li-muted hover:text-li-text hidden md:inline" data-tracking-control-name="guest_homepage-basic_guest_nav_menu_learning">Learning</a>
+      <a href="#" onclick="switchAuthTab('login')" class="text-li-muted hover:text-li-text hidden md:inline" data-tracking-control-name="guest_homepage-basic_guest_nav_menu_jobs">Jobs</a>
+      <a href="#" onclick="switchAuthTab('login')" class="text-li-muted hover:text-li-text hidden lg:inline" data-tracking-control-name="guest_homepage-basic_guest_nav_menu_games">Games</a>
+      <button onclick="switchAuthTab('register')" class="border border-li-blue text-li-blue px-4 py-1.5 rounded-full hover:bg-blue-50 transition" data-tracking-control-name="guest_homepage-basic_nav-header-join">Join now</button>
+      <button onclick="switchAuthTab('login')" class="border border-li-blue bg-li-blue text-white px-4 py-1.5 rounded-full hover:bg-li-hover transition" data-tracking-control-name="guest_homepage-basic_nav-header-signin">Sign in</button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="max-w-6xl mx-auto w-full px-4 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <!-- LEFT: Auth Headline & Form -->
+    <div class="space-y-6">
+      <h1 class="text-4xl md:text-5xl font-light text-[#8f5849] leading-tight font-serif">Welcome to your professional community</h1>
+
+      <div class="bg-white rounded-2xl border border-li-border shadow-sm p-8 space-y-5">
+        <div id="loginTab">
+          <h2 class="text-2xl font-bold mb-4">Sign in</h2>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-li-muted block mb-1">Email or phone</label>
+              <input id="loginEmail" type="email" placeholder="Email" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-li-blue">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-li-muted block mb-1">Password</label>
+              <input id="loginPassword" type="password" placeholder="Password" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-li-blue">
+            </div>
+            <button onclick="doLogin()" class="w-full bg-li-blue hover:bg-li-hover text-white font-semibold py-3 rounded-full transition text-sm shadow">Sign in</button>
+          </div>
+          <div class="flex items-center my-4"><div class="flex-1 h-px bg-slate-200"></div><span class="text-xs text-li-muted px-3">or</span><div class="flex-1 h-px bg-slate-200"></div></div>
+          <p class="text-center text-sm text-li-muted">New to LinkedIn? <button onclick="switchAuthTab('register')" class="text-li-blue font-semibold hover:underline">Join now</button></p>
+          <div class="mt-4 pt-4 border-t border-slate-100 text-xs text-li-muted">
+            <div class="font-semibold text-center mb-2">⚡ Quick 1-Click Demo Accounts:</div>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="document.getElementById('loginEmail').value='gowtham@example.com';document.getElementById('loginPassword').value='pass123';doLogin()" class="border border-slate-200 hover:border-li-blue p-2 rounded text-center bg-slate-50 hover:bg-blue-50 transition">
+                <div class="font-bold text-li-text">Gowtham</div>
+                <div class="text-[10px] text-li-muted">Eng (#OTW)</div>
+              </button>
+              <button onclick="document.getElementById('loginEmail').value='priya@example.com';document.getElementById('loginPassword').value='pass123';doLogin()" class="border border-slate-200 hover:border-li-blue p-2 rounded text-center bg-slate-50 hover:bg-blue-50 transition">
+                <div class="font-bold text-li-text">Priya</div>
+                <div class="text-[10px] text-li-muted">Senior PM</div>
+              </button>
+              <button onclick="document.getElementById('loginEmail').value='alex@example.com';document.getElementById('loginPassword').value='pass123';doLogin()" class="border border-slate-200 hover:border-li-blue p-2 rounded text-center bg-slate-50 hover:bg-blue-50 transition">
+                <div class="font-bold text-li-text">Alex</div>
+                <div class="text-[10px] text-li-muted">AI Engineer</div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="registerTab" class="hidden">
+          <h2 class="text-2xl font-bold mb-4">Join LinkedIn</h2>
+          <div class="space-y-3">
+            <input id="regName" type="text" placeholder="Full name" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-li-blue">
+            <input id="regEmail" type="email" placeholder="Email" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-li-blue">
+            <input id="regPassword" type="password" placeholder="Password (6+ characters)" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-li-blue">
+            <input id="regHeadline" type="text" placeholder="Headline (e.g. Software Engineer)" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-li-blue">
+            <input id="regLocation" type="text" placeholder="Location (e.g. Bengaluru, India)" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-li-blue">
+            <button onclick="doRegister()" class="w-full bg-li-blue hover:bg-li-hover text-white font-semibold py-3 rounded-full transition text-sm shadow">Agree & Join</button>
+          </div>
+          <p class="text-center text-sm text-li-muted mt-4">Already on LinkedIn? <button onclick="switchAuthTab('login')" class="text-li-blue font-semibold hover:underline">Sign in</button></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Official LinkedIn Hero Illustration -->
+    <div class="flex justify-center items-center">
+      <img src="/images/hero-illustration.svg" alt="Find your dream job and build your career" class="w-full max-w-lg drop-shadow-md">
+    </div>
+  </main>
+
+  <!-- Official Connect / Community Carousel Cards (Captured from static.licdn.com) -->
+  <section class="max-w-6xl mx-auto w-full px-4 py-16">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <h2 class="text-3xl font-light text-[#191919] mb-3">Connect with people who can help</h2>
+      <p class="text-li-muted text-sm">Find colleagues, classmates, and friends on LinkedIn</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-2xl border border-li-border p-6 shadow-sm hover:shadow-md transition text-center space-y-4">
+        <img src="/images/connect-1.png" alt="Connect" class="w-36 h-36 rounded-full mx-auto object-cover border-4 border-[#edf3f8]">
+        <h3 class="font-bold text-lg text-li-text">Let the right people know you're open to work</h3>
+        <p class="text-xs text-li-muted leading-relaxed">With the Open To Work feature, you can privately tell recruiters or publicly share with the LinkedIn community that you are looking for new job opportunities.</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-li-border p-6 shadow-sm hover:shadow-md transition text-center space-y-4">
+        <img src="/images/connect-2.png" alt="Conversations" class="w-36 h-36 rounded-full mx-auto object-cover border-4 border-[#edf3f8]">
+        <h3 class="font-bold text-lg text-li-text">Conversations today could lead to opportunity tomorrow</h3>
+        <p class="text-xs text-li-muted leading-relaxed">Sending messages to people you know is a great way to strengthen relationships as you take the next step in your career.</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-li-border p-6 shadow-sm hover:shadow-md transition text-center space-y-4">
+        <img src="/images/connect-3.png" alt="Stay updated" class="w-36 h-36 rounded-full mx-auto object-cover border-4 border-[#edf3f8]">
+        <h3 class="font-bold text-lg text-li-text">Stay up to date on your industry</h3>
+        <p class="text-xs text-li-muted leading-relaxed">From live videos, to stories, to newsletters and more, LinkedIn is full of ways to stay up to date on the latest discussions in your industry.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Official "Who is LinkedIn for?" Section with High-Res Asset & Intent Modules -->
+  <section id="brand-discovery" class="bg-white py-16 border-y border-li-border">
+    <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="order-2 lg:order-1 space-y-6">
+        <h2 class="text-3xl font-light text-[#191919]">Who is LinkedIn for?</h2>
+        <p class="text-li-muted text-sm leading-relaxed">Anyone looking to navigate their professional life. From students and job seekers to seasoned executives, LinkedIn connects you to opportunities, knowledge, and people.</p>
+        <div class="space-y-4 pt-2">
+          <div class="flex items-start space-x-4 p-4 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-slate-100" onclick="switchAuthTab('login')">
+            <div class="w-12 h-12 rounded-full bg-[#edf3f8] flex items-center justify-center flex-shrink-0">
+              <img src="/images/asset_9.svg" class="w-6 h-6" alt="Jobs">
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-li-text">Find the right job or internship for you</h3>
+              <p class="text-xs text-li-muted mt-1">Discover millions of jobs with transparent salary ranges, company culture ratings, and easy application.</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-4 p-4 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-slate-100" onclick="switchAuthTab('login')">
+            <div class="w-12 h-12 rounded-full bg-[#edf3f8] flex items-center justify-center flex-shrink-0">
+              <img src="/images/feature-connect.svg" class="w-6 h-6" alt="Connect">
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-li-text">Connect with people who can help</h3>
+              <p class="text-xs text-li-muted mt-1">Grow your professional network, keep in touch with colleagues, and discover shared connections.</p>
+            </div>
+          </div>
+          <div class="flex items-start space-x-4 p-4 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-slate-100" onclick="switchAuthTab('login')">
+            <div class="w-12 h-12 rounded-full bg-[#edf3f8] flex items-center justify-center flex-shrink-0">
+              <img src="/images/feature-learn.svg" class="w-6 h-6" alt="Learn">
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-li-text">Learn the skills you need to succeed</h3>
+              <p class="text-xs text-li-muted mt-1">From technology and creative courses to business analysis and leadership training.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="order-1 lg:order-2 flex justify-center">
+        <img src="/images/who-is-linkedin-for.jpg" alt="Who is LinkedIn for?" class="rounded-2xl max-w-full h-auto shadow-md border border-slate-200 object-cover max-h-[500px]">
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Top Content Pills -->
+  <section id="explore-top-content" class="max-w-6xl mx-auto w-full px-4 py-12">
+    <h2 class="text-3xl font-light text-[#191919] mb-6">Explore top LinkedIn content</h2>
+    <div class="flex flex-wrap gap-2.5">
+      <button onclick="switchAuthTab('login')" class="bg-white border border-slate-300 text-sm px-5 py-2.5 rounded-full hover:bg-slate-100 transition font-medium text-li-text shadow-sm">AI &amp; Machine Learning</button>
+      <button onclick="switchAuthTab('login')" class="bg-white border border-slate-300 text-sm px-5 py-2.5 rounded-full hover:bg-slate-100 transition font-medium text-li-text shadow-sm">Marketing</button>
+      <button onclick="switchAuthTab('login')" class="bg-white border border-slate-300 text-sm px-5 py-2.5 rounded-full hover:bg-slate-100 transition font-medium text-li-text shadow-sm">Data Science</button>
+      <button onclick="switchAuthTab('login')" class="bg-white border border-slate-300 text-sm px-5 py-2.5 rounded-full hover:bg-slate-100 transition font-medium text-li-text shadow-sm">Engineering</button>
+      <button onclick="switchAuthTab('login')" class="bg-white border border-slate-300 text-sm px-5 py-2.5 rounded-full hover:bg-slate-100 transition font-medium text-li-text shadow-sm">Leadership</button>
+      <button onclick="switchAuthTab('login')" class="bg-white border border-slate-300 text-sm px-5 py-2.5 rounded-full hover:bg-slate-100 transition font-medium text-li-text shadow-sm">Product Management</button>
+      <button onclick="switchAuthTab('login')" class="bg-white border border-slate-300 text-sm px-5 py-2.5 rounded-full hover:bg-slate-100 transition font-medium text-li-text shadow-sm">Remote Work</button>
+      <button onclick="switchAuthTab('login')" class="bg-white border border-slate-300 text-sm px-5 py-2.5 rounded-full hover:bg-slate-100 transition font-medium text-li-text shadow-sm">Startups</button>
+    </div>
+  </section>
+
+  <!-- Suggested Job Searches -->
+  <section class="max-w-6xl mx-auto w-full px-4 py-8">
+    <h2 class="text-3xl font-light mb-2">Find your dream job and build your career</h2>
+    <p class="text-li-muted mb-6 text-sm">Suggested searches</p>
+    <div class="flex flex-wrap gap-2">
+      <button onclick="switchAuthTab('login')" class="border border-[#666] text-xs font-semibold px-4 py-2 rounded-full hover:bg-white transition">Engineering</button>
+      <button onclick="switchAuthTab('login')" class="border border-[#666] text-xs font-semibold px-4 py-2 rounded-full hover:bg-white transition">Business Development</button>
+      <button onclick="switchAuthTab('login')" class="border border-[#666] text-xs font-semibold px-4 py-2 rounded-full hover:bg-white transition">Finance</button>
+      <button onclick="switchAuthTab('login')" class="border border-[#666] text-xs font-semibold px-4 py-2 rounded-full hover:bg-white transition">Administrative Assistant</button>
+      <button onclick="switchAuthTab('login')" class="border border-[#666] text-xs font-semibold px-4 py-2 rounded-full hover:bg-white transition">Customer Service</button>
+      <button onclick="switchAuthTab('login')" class="border border-[#666] text-xs font-semibold px-4 py-2 rounded-full hover:bg-white transition">Operations</button>
+      <button onclick="switchAuthTab('login')" class="border border-[#666] text-xs font-semibold px-4 py-2 rounded-full hover:bg-white transition">Information Technology</button>
+      <button onclick="switchAuthTab('login')" class="border border-[#666] text-xs font-semibold px-4 py-2 rounded-full hover:bg-white transition">Marketing</button>
+      <button onclick="switchAuthTab('login')" class="border border-[#666] text-xs font-semibold px-4 py-2 rounded-full hover:bg-white transition">Human Resources</button>
+    </div>
+  </section>
+
+  <!-- Post a Job for millions CTA -->
+  <section class="bg-white py-16 border-y border-li-border">
+    <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <div>
+        <h2 class="text-3xl font-light leading-snug">Post your job for millions of people to see</h2>
+        <p class="text-li-muted mt-4 text-sm leading-relaxed">Reach qualified candidates across all industries and roles. Hire with confidence on LinkedIn.</p>
+        <button onclick="switchAuthTab('register')" class="mt-6 border-2 border-li-blue text-li-blue font-bold px-6 py-2.5 rounded-full hover:bg-blue-50 transition text-sm">Post a job</button>
+      </div>
+      <div class="flex justify-center">
+        <img src="/images/asset_14.svg" alt="Post a job" class="w-32 h-32 text-li-blue">
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section id="bottom-cta-section" class="bg-white py-16 relative overflow-hidden">
+    <div class="max-w-2xl mx-auto px-4 text-center space-y-6 relative z-10">
+      <h2 class="text-3xl font-light">Join your colleagues, classmates, and friends on LinkedIn</h2>
+      <button onclick="switchAuthTab('register')" class="bg-li-blue hover:bg-li-hover text-white font-semibold px-8 py-3.5 rounded-full transition text-sm shadow-md">Join now</button>
+    </div>
+    <img src="/images/footer-cta.svg" class="absolute bottom-0 right-0 w-64 opacity-20 pointer-events-none" alt="">
+  </section>
+
+  <!-- Directory Section -->
+  <section id="directory-section" class="bg-[#f3f2f0] py-12 border-t border-li-border" data-tracking-control-name="guest_homepage-basic_directory">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-base font-bold mb-6 text-li-text">Browse LinkedIn</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-xs text-li-muted">
+        <div><h3 class="font-bold text-[#191919] mb-3">General</h3><ul class="space-y-1.5"><li><a href="#" class="hover:text-li-blue hover:underline">Sign Up</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Help Center</a></li><li><a href="#" class="hover:text-li-blue hover:underline">About</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Press</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Blog</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Careers</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Developers</a></li></ul></div>
+        <div><h3 class="font-bold text-[#191919] mb-3">Directories</h3><ul class="space-y-1.5"><li><a href="#" class="hover:text-li-blue hover:underline" data-tracking-control-name="homepage-basic_directory_peopleDirectoryUrl">Members</a></li><li><a href="#" class="hover:text-li-blue hover:underline" data-tracking-control-name="homepage-basic_directory_jobSearchDirectoryUrl">Jobs</a></li><li><a href="#" class="hover:text-li-blue hover:underline" data-tracking-control-name="homepage-basic_directory_companyDirectoryUrl">Companies</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Featured</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Learning</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Posts</a></li></ul></div>
+        <div><h3 class="font-bold text-[#191919] mb-3">Business Solutions</h3><ul class="space-y-1.5"><li><a href="#" class="hover:text-li-blue hover:underline">Talent</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Marketing</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Sales</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Learning</a></li></ul></div>
+        <div><h3 class="font-bold text-[#191919] mb-3">Explore</h3><ul class="space-y-1.5"><li><a href="#" class="hover:text-li-blue hover:underline">Top Companies</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Top Startups</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Top Colleges</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Articles</a></li><li><a href="#" class="hover:text-li-blue hover:underline">News</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Newsletters</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Services</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Products</a></li><li><a href="#" class="hover:text-li-blue hover:underline">Games</a></li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#f3f2f0] border-t border-li-border py-6">
+    <div class="max-w-6xl mx-auto px-4 flex flex-wrap items-center justify-center gap-4 text-xs text-li-muted">
+      <a href="#" class="flex items-center space-x-1.5 text-li-blue">
+        <img src="/images/asset_7.svg" alt="LinkedIn" class="h-4 w-auto">
+      </a>
+      <span>&copy; 2026 LinkedIn Corporation</span>
+      <a href="#" class="hover:text-li-blue" data-tracking-control-name="homepage-basic_footer-user-agreement">User Agreement</a>
+      <a href="#" class="hover:text-li-blue" data-tracking-control-name="homepage-basic_footer-privacy-policy">Privacy Policy</a>
+      <a href="#" class="hover:text-li-blue" data-tracking-control-name="homepage-basic_footer-cookie-policy">Cookie Policy</a>
+      <a href="#" class="hover:text-li-blue" data-tracking-control-name="homepage-basic_footer-accessibility">Accessibility</a>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  MAIN APP (shown when logged in)           -->
+<!-- ══════════════════════════════════════════ -->
+<div id="mainApp" class="hidden flex flex-col min-h-screen">
+
+  <!-- TOP NAV (mirrors LinkedIn's real nav structure from captured DOM) -->
+  <header class="bg-white border-b border-li-border sticky top-0 z-50 px-4">
+    <div class="max-w-6xl mx-auto flex items-center justify-between h-14">
+
+      <!-- Logo + Search -->
+      <div class="flex items-center space-x-2 flex-1 max-w-xs">
+        <button onclick="showView('feed')" class="text-li-blue flex-shrink-0">
+          <svg class="w-9 h-9 fill-current" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.64c-.95 0-1.67.72-1.67 1.64 0 .92.72 1.64 1.67 1.64.92 0 1.64-.72 1.64-1.64 0-.91-.72-1.63-1.64-1.63Z"/></svg>
+        </button>
+        <div class="relative w-full hidden sm:block">
+          <svg class="w-4 h-4 text-li-muted absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="searchInput" oninput="handleSearch(this.value)" onkeydown="if(event.key==='Enter')doGlobalSearch(this.value)" placeholder="Search" class="w-full bg-[#edf3f8] text-sm pl-9 pr-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black">
+          <div id="searchAutocompleteDropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-li-border py-2 z-50 text-xs">
+            <div id="searchAutocompleteResults" class="divide-y divide-slate-100"></div>
+            <div class="p-2 text-center border-t border-slate-100 bg-slate-50">
+              <button onclick="doGlobalSearch(document.getElementById('searchInput').value)" class="text-li-blue font-semibold hover:underline">See all results &rarr;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nav Links -->
+      <nav class="flex items-center space-x-1 h-full">
+        <button onclick="showView('feed')" id="nav-feed" class="nav-btn flex flex-col items-center justify-center px-3 h-full text-li-muted hover:text-li-text transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span class="text-xs hidden md:block">Home</span>
+        </button>
+        <button onclick="showView('network')" id="nav-network" class="nav-btn flex flex-col items-center justify-center px-3 h-full text-li-muted hover:text-li-text transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span class="text-xs hidden md:block">My Network</span>
+        </button>
+        <button onclick="showView('jobs')" id="nav-jobs" class="nav-btn flex flex-col items-center justify-center px-3 h-full text-li-muted hover:text-li-text transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <span class="text-xs hidden md:block">Jobs</span>
+        </button>
+        <button onclick="showView('messaging')" id="nav-messaging" class="nav-btn flex flex-col items-center justify-center px-3 h-full text-li-muted hover:text-li-text transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+          <span id="msgBadge" class="hidden absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+          <span class="text-xs hidden md:block">Messaging</span>
+        </button>
+        <button onclick="showView('notifications')" id="nav-notifications" class="nav-btn relative flex flex-col items-center justify-center px-3 h-full text-li-muted hover:text-li-text transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span id="notifBadge" class="hidden absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+          <span class="text-xs hidden md:block">Notifications</span>
+        </button>
+      </nav>
+
+      <!-- User Menu ("Me" dropdown & "For Business") -->
+      <div class="relative flex items-center space-x-1 pl-3 border-l border-li-border">
+        <button onclick="toggleMeDropdown()" class="flex flex-col items-center justify-center px-2 py-1 text-li-muted hover:text-li-text transition">
+          <div id="userAvatarCircle" class="w-6 h-6 rounded-full bg-li-blue flex items-center justify-center text-white font-bold text-[10px] overflow-hidden"></div>
+          <div class="flex items-center space-x-0.5 text-[11px] leading-none mt-1">
+            <span>Me</span>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </button>
+
+        <!-- For Business -->
+        <button onclick="toggleBusinessDropdown()" class="hidden sm:flex flex-col items-center justify-center px-2 py-1 text-li-muted hover:text-li-text transition">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 10h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 16h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4z"/></svg>
+          <div class="flex items-center space-x-0.5 text-[11px] leading-none mt-1">
+            <span class="hidden md:inline">For Business</span>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </button>
+
+        <!-- "Me" Dropdown Menu -->
+        <div id="meDropdown" class="hidden absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-2xl border border-li-border py-2 z-50 text-xs">
+          <div class="px-4 py-3 border-b border-li-border flex items-center space-x-3">
+            <div id="dropdownAvatar" class="w-12 h-12 rounded-full bg-li-blue flex items-center justify-center text-white font-bold text-base overflow-hidden flex-shrink-0"></div>
+            <div class="flex-1 min-w-0">
+              <div id="dropdownName" class="font-bold text-sm truncate"></div>
+              <div id="dropdownHeadline" class="text-li-muted text-[11px] truncate"></div>
+            </div>
+          </div>
+          <div class="p-2 border-b border-li-border">
+            <button onclick="showView('profile'); toggleMeDropdown()" class="w-full text-center border border-li-blue text-li-blue font-semibold py-1 rounded-full hover:bg-blue-50 transition">View Profile</button>
+          </div>
+          <div class="p-2 border-b border-li-border space-y-1">
+            <div class="font-bold text-li-text px-2 py-1">Account</div>
+            <div class="px-2 py-1 text-li-muted hover:text-li-blue hover:bg-slate-50 rounded cursor-pointer flex items-center space-x-1"><span class="bg-[#d4af37] text-white text-[9px] font-bold px-1 rounded">IN</span><span>Try Premium for $0</span></div>
+            <div class="px-2 py-1 text-li-muted hover:text-li-blue hover:bg-slate-50 rounded cursor-pointer" onclick="openEditProfile(); toggleMeDropdown()">Settings & Privacy</div>
+            <div class="px-2 py-1 text-li-muted hover:text-li-blue hover:bg-slate-50 rounded cursor-pointer">Help & Support</div>
+            <div class="px-2 py-1 text-li-muted hover:text-li-blue hover:bg-slate-50 rounded cursor-pointer">Language</div>
+          </div>
+          <div class="p-2 space-y-1">
+            <div class="font-bold text-li-text px-2 py-1">Manage</div>
+            <div class="px-2 py-1 text-li-muted hover:text-li-blue hover:bg-slate-50 rounded cursor-pointer" onclick="showView('profile'); toggleMeDropdown()">Posts & Activity</div>
+            <div class="px-2 py-1 text-li-muted hover:text-li-blue hover:bg-slate-50 rounded cursor-pointer" onclick="showView('jobs'); toggleMeDropdown()">Job Posting Account</div>
+            <button onclick="doLogout(); toggleMeDropdown()" class="w-full text-left px-2 py-1.5 text-red-600 font-semibold hover:bg-red-50 rounded transition mt-1">Sign Out</button>
+          </div>
+        </div>
+
+        <!-- "For Business" Dropdown Menu -->
+        <div id="businessDropdown" class="hidden absolute top-full right-0 mt-2 w-80 bg-white rounded-lg shadow-2xl border border-li-border p-4 z-50 text-xs">
+          <div class="font-bold text-sm mb-3">LinkedIn Business Solutions</div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="p-2 hover:bg-slate-50 rounded cursor-pointer border border-transparent hover:border-slate-200">
+              <div class="font-semibold text-li-text">Learning</div>
+              <div class="text-[10px] text-li-muted mt-0.5">Upgrade skills and courses</div>
+            </div>
+            <div class="p-2 hover:bg-slate-50 rounded cursor-pointer border border-transparent hover:border-slate-200">
+              <div class="font-semibold text-li-text">Talent Insights</div>
+              <div class="text-[10px] text-li-muted mt-0.5">Data-driven hiring</div>
+            </div>
+            <div class="p-2 hover:bg-slate-50 rounded cursor-pointer border border-transparent hover:border-slate-200">
+              <div class="font-semibold text-li-text">Post a Job</div>
+              <div class="text-[10px] text-li-muted mt-0.5">Reach top candidates</div>
+            </div>
+            <div class="p-2 hover:bg-slate-50 rounded cursor-pointer border border-transparent hover:border-slate-200">
+              <div class="font-semibold text-li-text">Advertise</div>
+              <div class="text-[10px] text-li-muted mt-0.5">Acquire B2B customers</div>
+            </div>
+            <div class="p-2 hover:bg-slate-50 rounded cursor-pointer border border-transparent hover:border-slate-200">
+              <div class="font-semibold text-li-text">Find Leads</div>
+              <div class="text-[10px] text-li-muted mt-0.5">Sales Navigator</div>
+            </div>
+            <div class="p-2 hover:bg-slate-50 rounded cursor-pointer border border-transparent hover:border-slate-200">
+              <div class="font-semibold text-li-text">Services Marketplace</div>
+              <div class="text-[10px] text-li-muted mt-0.5">Find freelance clients</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══ FEED VIEW ══ -->
+  <main id="view-feed" class="hidden flex-1 max-w-6xl mx-auto w-full px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="md:col-span-1 space-y-3">
+      <div class="bg-white rounded-lg border border-li-border overflow-hidden shadow-sm">
+        <div class="h-14 bg-gradient-to-r from-li-blue to-sky-400"></div>
+        <div class="px-4 pb-4 -mt-7 text-center border-b border-li-border">
+          <div id="profileAvatarLg" class="w-14 h-14 rounded-full bg-li-blue border-2 border-white mx-auto flex items-center justify-center text-white font-bold text-xl shadow-sm"></div>
+          <h2 id="sidebarName" class="font-bold text-sm mt-2"></h2>
+          <p id="sidebarHeadline" class="text-xs text-li-muted mt-0.5 leading-tight"></p>
+        </div>
+        <div class="px-4 py-3 text-xs text-li-muted space-y-2 border-b border-li-border">
+          <div class="flex justify-between">
+            <span>Profile viewers</span>
+            <span id="statViewers" class="text-li-blue font-semibold">—</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Post impressions</span>
+            <span id="statImpressions" class="text-li-blue font-semibold">—</span>
+          </div>
+        </div>
+        <div class="p-3 text-xs font-semibold text-li-text hover:bg-slate-50 cursor-pointer flex items-center space-x-2">
+          <svg class="w-4 h-4 text-li-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+          <span>Saved items</span>
+        </div>
+      </div>
+      <!-- Quick links -->
+      <div class="bg-white rounded-lg border border-li-border p-3 text-xs shadow-sm space-y-2">
+        <div class="font-semibold text-li-text hover:text-li-blue cursor-pointer">Groups</div>
+        <div class="font-semibold text-li-text hover:text-li-blue cursor-pointer">Events</div>
+        <div class="font-semibold text-li-text hover:text-li-blue cursor-pointer">Followed Hashtags</div>
+      </div>
+    </aside>
+
+    <!-- CENTER FEED -->
+    <section class="md:col-span-2 space-y-4">
+      <!-- Post composer -->
+      <div class="bg-white rounded-lg border border-li-border p-4 shadow-sm">
+        <div class="flex items-center space-x-3 mb-3">
+          <div id="composerAvatar" class="w-10 h-10 rounded-full bg-li-blue flex items-center justify-center text-white font-bold flex-shrink-0"></div>
+          <button onclick="openPostModal()" class="flex-1 text-left bg-white border border-li-border hover:bg-slate-50 rounded-full py-2.5 px-4 text-sm text-li-muted font-medium transition">
+            Start a post, share your thoughts...
+          </button>
+        </div>
+        <div class="flex justify-around border-t border-slate-100 pt-3 text-xs text-li-muted font-medium">
+          <button onclick="openPostModal('photo')" class="flex items-center space-x-2 hover:bg-slate-100 px-3 py-1.5 rounded transition text-blue-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span class="text-li-muted">Media</span>
+          </button>
+          <button onclick="openPostModal('event')" class="flex items-center space-x-2 hover:bg-slate-100 px-3 py-1.5 rounded transition text-amber-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span class="text-li-muted">Event</span>
+          </button>
+          <button onclick="openPostModal('article')" class="flex items-center space-x-2 hover:bg-slate-100 px-3 py-1.5 rounded transition text-rose-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+            <span class="text-li-muted">Write article</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feed Sorting Bar -->
+      <div class="flex items-center justify-between py-1 text-xs text-li-muted">
+        <div class="flex-1 border-t border-slate-300"></div>
+        <div class="px-3 flex items-center space-x-1 cursor-pointer select-none" onclick="toggleFeedSort()">
+          <span>Sort by:</span>
+          <span id="feedSortLabel" class="font-bold text-li-text">Recent</span>
+          <svg class="w-3.5 h-3.5 text-li-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+      </div>
+
+      <!-- Posts -->
+      <div id="postsContainer" class="space-y-4">
+        <!-- Skeleton loaders -->
+        <div class="skeleton bg-white rounded-lg border border-li-border p-4 h-40 shadow-sm"></div>
+        <div class="skeleton bg-white rounded-lg border border-li-border p-4 h-32 shadow-sm"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="md:col-span-1 space-y-3">
+      <div class="bg-white rounded-lg border border-li-border p-4 shadow-sm">
+        <h3 class="font-bold text-sm mb-3 flex items-center justify-between">
+          <span>LinkedIn News</span>
+          <svg class="w-4 h-4 text-li-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </h3>
+        <ul class="space-y-3 text-xs" id="newsFeed">
+          <li class="cursor-pointer hover:bg-slate-50 p-1 rounded"><div class="font-semibold">• AI Agents reshaping developer workflows</div><div class="text-li-muted text-[10px]">2h ago · 14,290 readers</div></li>
+          <li class="cursor-pointer hover:bg-slate-50 p-1 rounded"><div class="font-semibold">• Tech hiring picks up for Q4 2026</div><div class="text-li-muted text-[10px]">5h ago · 8,421 readers</div></li>
+          <li class="cursor-pointer hover:bg-slate-50 p-1 rounded"><div class="font-semibold">• Remote work trends stabilising</div><div class="text-li-muted text-[10px]">1d ago · 22,019 readers</div></li>
+          <li class="cursor-pointer hover:bg-slate-50 p-1 rounded"><div class="font-semibold">• Cloud computing demand surges across APAC</div><div class="text-li-muted text-[10px]">4h ago · 3,118 readers</div></li>
+        </ul>
+      </div>
+      <!-- Suggested connections (right rail) -->
+      <div class="bg-white rounded-lg border border-li-border p-4 shadow-sm text-xs space-y-3" id="suggestionsRail"></div>
+    </aside>
+  </main>
+
+  <!-- ══ JOBS VIEW ══ -->
+  <main id="view-jobs" class="hidden flex-1 max-w-6xl mx-auto w-full px-4 py-6">
+    <div class="bg-white p-5 rounded-lg border border-li-border shadow-sm mb-5">
+      <h2 class="text-xl font-bold mb-4">Find your next opportunity</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="relative">
+          <svg class="w-4 h-4 text-li-muted absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="jobTitleInput" placeholder="Job title, skill, or company" class="w-full border border-li-border pl-9 pr-3 py-2.5 rounded text-sm focus:outline-none focus:ring-1 focus:ring-li-blue">
+        </div>
+        <div class="relative">
+          <svg class="w-4 h-4 text-li-muted absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <input type="text" id="jobLocationInput" placeholder="City or Remote" class="w-full border border-li-border pl-9 pr-3 py-2.5 rounded text-sm focus:outline-none focus:ring-1 focus:ring-li-blue">
+        </div>
+        <button onclick="searchJobs()" class="bg-li-blue hover:bg-li-hover text-white font-semibold py-2.5 px-6 rounded text-sm transition">Search jobs</button>
+      </div>
+    </div>
+    <div id="jobsList" class="space-y-3"></div>
+  </main>
+
+  <!-- ══ NETWORK VIEW ══ -->
+  <main id="view-network" class="hidden flex-1 max-w-6xl mx-auto w-full px-4 py-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <section class="md:col-span-2 space-y-4">
+      <div class="bg-white p-5 rounded-lg border border-li-border shadow-sm">
+        <h2 class="text-lg font-bold mb-4">People you may know</h2>
+        <div id="peopleList" class="space-y-4"></div>
+      </div>
+    </section>
+    <aside class="space-y-3">
+      <div class="bg-white p-4 rounded-lg border border-li-border shadow-sm text-sm">
+        <h3 class="font-bold mb-2">Your network stats</h3>
+        <div id="networkStats" class="space-y-2 text-xs text-li-muted">Loading…</div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ══ NOTIFICATIONS VIEW ══ -->
+  <main id="view-notifications" class="hidden flex-1 max-w-3xl mx-auto w-full px-4 py-6">
+    <div class="bg-white rounded-lg border border-li-border shadow-sm">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-li-border">
+        <h2 class="text-lg font-bold">Notifications</h2>
+        <button onclick="markAllRead()" class="text-xs text-li-blue hover:underline">Mark all as read</button>
+      </div>
+      <div id="notifList" class="divide-y divide-li-border"></div>
+    </div>
+  </main>
+
+  <!-- ══ MESSAGING VIEW ══ -->
+  <main id="view-messaging" class="hidden flex-1 max-w-5xl mx-auto w-full px-4 py-6">
+    <div class="bg-white rounded-lg border border-li-border shadow-sm overflow-hidden flex" style="height:calc(100vh - 120px)">
+      <!-- Conversation List -->
+      <div class="w-80 border-r border-li-border flex flex-col flex-shrink-0">
+        <div class="p-4 border-b border-li-border">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-bold">Messaging</h2>
+            <button onclick="openNewMessageModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center" title="New message">
+              <svg class="w-5 h-5 text-li-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            </button>
+          </div>
+          <div class="relative">
+            <svg class="w-4 h-4 text-li-muted absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="msgSearchInput" oninput="filterConversations(this.value)" placeholder="Search messages" class="w-full bg-[#edf3f8] text-sm pl-9 pr-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black">
+          </div>
+        </div>
+        <div id="conversationList" class="flex-1 overflow-y-auto divide-y divide-li-border"></div>
+      </div>
+      <!-- Message Thread -->
+      <div class="flex-1 flex flex-col">
+        <div id="msgThreadHeader" class="p-4 border-b border-li-border flex items-center space-x-3">
+          <div class="text-li-muted text-sm">Select a conversation to start messaging</div>
+        </div>
+        <div id="msgThread" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
+          <div class="text-center text-li-muted text-sm py-12">
+            <svg class="w-16 h-16 mx-auto text-slate-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+            <p>Your messages will appear here</p>
+          </div>
+        </div>
+        <div id="msgComposer" class="hidden p-3 border-t border-li-border bg-white">
+          <div class="flex items-center space-x-2">
+            <input type="text" id="msgInput" placeholder="Write a message..." onkeydown="if(event.key==='Enter')sendMessage()" class="flex-1 border border-li-border rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-li-blue">
+            <button onclick="sendMessage()" class="w-9 h-9 rounded-full bg-li-blue hover:bg-li-hover text-white flex items-center justify-center transition flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══ SEARCH RESULTS VIEW ══ -->
+  <main id="view-search" class="hidden flex-1 max-w-4xl mx-auto w-full px-4 py-6 space-y-4">
+    <div class="bg-white rounded-lg border border-li-border shadow-sm p-4">
+      <div class="flex items-center space-x-2 mb-3">
+        <h2 class="text-lg font-bold">Search Results for "<span id="searchQueryDisplay"></span>"</h2>
+      </div>
+      <div class="flex space-x-2 text-sm">
+        <button onclick="switchSearchTab('all')" id="searchTab-all" class="search-tab px-4 py-1.5 rounded-full font-semibold transition">All</button>
+        <button onclick="switchSearchTab('people')" id="searchTab-people" class="search-tab px-4 py-1.5 rounded-full font-semibold transition">People</button>
+        <button onclick="switchSearchTab('posts')" id="searchTab-posts" class="search-tab px-4 py-1.5 rounded-full font-semibold transition">Posts</button>
+        <button onclick="switchSearchTab('jobs')" id="searchTab-jobs" class="search-tab px-4 py-1.5 rounded-full font-semibold transition">Jobs</button>
+      </div>
+    </div>
+    <div id="searchResults" class="space-y-3"></div>
+  </main>
+
+  <!-- ══ PROFILE VIEW ══ -->
+  <main id="view-profile" class="hidden flex-1 max-w-4xl mx-auto w-full px-4 py-6 space-y-4">
+    <!-- Profile Header Card -->
+    <div class="bg-white rounded-lg border border-li-border shadow-sm overflow-hidden">
+      <div class="h-28 bg-gradient-to-r from-li-blue to-sky-400 relative">
+        <div id="openToWorkBanner" class="hidden absolute top-3 right-3 bg-emerald-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">🟢 Open to work</div>
+      </div>
+      <div class="px-6 pb-6 -mt-12">
+        <div id="profileBigAvatar" class="w-24 h-24 rounded-full bg-li-blue border-4 border-white flex items-center justify-center text-white font-bold text-3xl shadow mb-3"></div>
+        <div class="flex items-end justify-between mb-4">
+          <div>
+            <h1 id="profileName" class="text-2xl font-bold"></h1>
+            <p id="profileHeadline" class="text-li-muted text-sm mt-0.5"></p>
+            <p id="profileLocation" class="text-li-muted text-xs mt-1 flex items-center space-x-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+              <span></span>
+            </p>
+            <p id="profileIndustry" class="text-xs text-li-muted mt-1 hidden"></p>
+          </div>
+          <div class="flex space-x-2">
+            <button onclick="openEditProfile()" class="border border-li-blue text-li-blue text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-blue-50 transition">Edit profile</button>
+            <button onclick="toggleOpenToWork()" id="otwBtn" class="border border-emerald-500 text-emerald-600 text-xs font-semibold px-3 py-1.5 rounded-full hover:bg-emerald-50 transition">#OpenToWork</button>
+          </div>
+        </div>
+        <div class="flex items-center space-x-6 text-sm text-li-muted border-t border-li-border pt-4">
+          <div><span id="profileConnections" class="text-li-text font-semibold"></span> <span>connections</span></div>
+          <div id="profileJoinDate" class="text-xs"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="bg-white rounded-lg border border-li-border shadow-sm p-5">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-bold">About</h3>
+        <button onclick="openEditProfile()" class="text-li-muted hover:text-li-text"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></button>
+      </div>
+      <p id="profileAbout" class="text-sm text-li-muted whitespace-pre-wrap">No about section yet. <button onclick="openEditProfile()" class="text-li-blue hover:underline">Add one.</button></p>
+    </div>
+
+    <!-- Experience -->
+    <div class="bg-white rounded-lg border border-li-border shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold">Experience</h3>
+        <button onclick="openAddExperience()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-li-muted" title="Add experience">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+        </button>
+      </div>
+      <div id="experienceList" class="space-y-4"></div>
+    </div>
+
+    <!-- Education -->
+    <div class="bg-white rounded-lg border border-li-border shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold">Education</h3>
+        <button onclick="openAddEducation()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-li-muted" title="Add education">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+        </button>
+      </div>
+      <div id="educationList" class="space-y-4"></div>
+    </div>
+
+    <!-- Skills -->
+    <div class="bg-white rounded-lg border border-li-border shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold">Skills</h3>
+        <button onclick="openAddSkill()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-li-muted" title="Add skill">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+        </button>
+      </div>
+      <div id="skillsList" class="flex flex-wrap gap-2"></div>
+    </div>
+
+    <!-- Certifications -->
+    <div class="bg-white rounded-lg border border-li-border shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold">Licenses & Certifications</h3>
+        <button onclick="openAddCertification()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-li-muted" title="Add certification">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+        </button>
+      </div>
+      <div id="certificationsList" class="space-y-4"></div>
+    </div>
+
+    <!-- Languages -->
+    <div class="bg-white rounded-lg border border-li-border shadow-sm p-5">
+      <h3 class="font-bold mb-3">Languages</h3>
+      <div id="languagesList" class="space-y-2"></div>
+    </div>
+
+    <!-- Activity -->
+    <div class="bg-white rounded-lg border border-li-border shadow-sm p-5">
+      <h3 class="font-bold mb-3">Activity</h3>
+      <div id="profilePosts" class="space-y-3 text-sm text-li-muted">Loading posts…</div>
+    </div>
+  </main>
+
+</div><!-- /mainApp -->
+
+<!-- ══ POST MODAL (Rich Content: Text, Media, Poll, Article) ══ -->
+<div id="postModal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div class="p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b">
+        <h3 class="font-bold">Create a post</h3>
+        <button onclick="closePostModal()" class="text-slate-400 hover:text-black">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="flex items-center space-x-3">
+        <div id="modalAvatar" class="w-10 h-10 rounded-full bg-li-blue flex items-center justify-center text-white font-bold"></div>
+        <div>
+          <div id="modalName" class="font-bold text-sm"></div>
+          <select id="postVisibility" class="text-xs text-li-muted border border-slate-200 rounded px-2 py-0.5 mt-0.5">
+            <option value="anyone">🌐 Anyone</option>
+            <option value="connections">👥 Connections only</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <textarea id="postContentInput" rows="5" placeholder="What do you want to talk about?" oninput="updatePostPreview()" class="w-full border-0 p-0 text-sm focus:outline-none resize-none"></textarea>
+
+      
+      <!-- Categorized Emoji Picker Drawer -->
+      <div id="emojiPickerDrawer" class="hidden relative bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2 mt-2">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-xs text-li-text">LinkedIn Emojis</span>
+          <button onclick="toggleEmojiDrawer()" class="text-slate-400 hover:text-black text-xs font-bold">&times;</button>
+        </div>
+        <div class="flex space-x-1 text-xs border-b border-slate-200 pb-1.5">
+          <button onclick="switchEmojiTab('work')" id="emojiTab-work" class="emoji-tab px-2 py-0.5 rounded font-semibold bg-li-blue text-white">💼 Work</button>
+          <button onclick="switchEmojiTab('react')" id="emojiTab-react" class="emoji-tab px-2 py-0.5 rounded text-li-muted hover:bg-slate-200">👏 React</button>
+          <button onclick="switchEmojiTab('smile')" id="emojiTab-smile" class="emoji-tab px-2 py-0.5 rounded text-li-muted hover:bg-slate-200">😀 Smile</button>
+          <button onclick="switchEmojiTab('tags')" id="emojiTab-tags" class="emoji-tab px-2 py-0.5 rounded text-li-muted hover:bg-slate-200">🏷️ Tags</button>
+        </div>
+        <div id="emojiGrid" class="grid grid-cols-8 gap-1 text-lg max-h-36 overflow-y-auto p-1 bg-white rounded border border-slate-200"></div>
+      </div>
+  
+      <!-- Hashtag Suggestions -->
+      <div id="hashtagRow" class="hidden flex flex-wrap gap-1">
+        <span class="text-xs text-li-muted">Suggested:</span>
+        <button onclick="addHashtag('#tech')" class="text-xs text-li-blue hover:underline">#tech</button>
+        <button onclick="addHashtag('#hiring')" class="text-xs text-li-blue hover:underline">#hiring</button>
+        <button onclick="addHashtag('#career')" class="text-xs text-li-blue hover:underline">#career</button>
+        <button onclick="addHashtag('#AI')" class="text-xs text-li-blue hover:underline">#AI</button>
+        <button onclick="addHashtag('#innovation')" class="text-xs text-li-blue hover:underline">#innovation</button>
+        <button onclick="addHashtag('#webdev')" class="text-xs text-li-blue hover:underline">#webdev</button>
+      </div>
+
+      <!-- Media URL input (toggleable) -->
+      <div id="mediaSection" class="hidden space-y-2">
+        <label class="text-xs text-li-muted font-semibold">📷 Image URL</label>
+        <input type="text" id="postImageInput" placeholder="Paste image URL (https://...)" oninput="previewImage()" class="w-full border border-slate-200 p-2.5 rounded text-xs focus:outline-none focus:ring-1 focus:ring-li-blue">
+        <div id="imagePreview" class="hidden"><img id="imagePreviewImg" class="rounded-lg max-h-40 object-cover w-full" onerror="this.parentElement.classList.add('hidden')"></div>
+      </div>
+
+      <!-- Poll Creator (toggleable) -->
+      <div id="pollSection" class="hidden space-y-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-semibold text-li-text">📊 Create a poll</label>
+          <button onclick="removePoll()" class="text-xs text-red-500 hover:underline">Remove</button>
+        </div>
+        <input type="text" id="pollQuestion" placeholder="Your question" class="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-li-blue">
+        <div id="pollOptions" class="space-y-2">
+          <input type="text" class="poll-option w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-li-blue" placeholder="Option 1">
+          <input type="text" class="poll-option w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-li-blue" placeholder="Option 2">
+        </div>
+        <button onclick="addPollOption()" class="text-xs text-li-blue hover:underline flex items-center space-x-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"/></svg><span>Add option</span></button>
+        <div class="flex items-center space-x-2 text-xs text-li-muted">
+          <span>Duration:</span>
+          <select id="pollDuration" class="border border-slate-300 rounded px-2 py-1 text-xs">
+            <option value="1 day">1 day</option>
+            <option value="3 days">3 days</option>
+            <option value="1 week" selected>1 week</option>
+            <option value="2 weeks">2 weeks</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Post Type Toolbar -->
+      <div class="flex items-center justify-between border-t border-slate-100 pt-3">
+        <div class="flex space-x-1">
+          <button onclick="toggleMediaInput()" title="Add image" class="p-2 rounded hover:bg-slate-100 transition text-blue-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </button>
+          <button onclick="togglePoll()" title="Create poll" class="p-2 rounded hover:bg-slate-100 transition text-amber-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </button>
+          <button onclick="toggleHashtags()" title="Add hashtags" class="p-2 rounded hover:bg-slate-100 transition text-emerald-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+          </button>
+          <button onclick="addEmoji()" title="Add emoji" class="p-2 rounded hover:bg-slate-100 transition text-rose-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span id="postCharCount" class="text-xs text-li-muted">0/3000</span>
+          <button onclick="submitPost()" id="postSubmitBtn" class="bg-li-blue hover:bg-li-hover text-white font-semibold text-sm px-5 py-2 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>Post</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EDIT PROFILE MODAL ══ -->
+
+<!-- ══ NEW MESSAGE MODAL ══ -->
+<div id="newMsgModal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
+    <div class="flex items-center justify-between pb-3 border-b">
+      <h3 class="font-bold">New Message</h3>
+      <button onclick="closeNewMessageModal()" class="text-slate-400 hover:text-black">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div>
+      <label class="text-xs text-li-muted block mb-1">To:</label>
+      <select id="newMsgTo" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue"></select>
+    </div>
+    <textarea id="newMsgContent" rows="3" placeholder="Write your message..." class="w-full border border-slate-200 p-3 rounded text-sm focus:outline-none focus:ring-1 focus:ring-li-blue resize-none"></textarea>
+    <div class="flex justify-end pt-2 border-t">
+      <button onclick="sendNewMessage()" class="bg-li-blue hover:bg-li-hover text-white font-semibold text-sm px-5 py-2 rounded-full transition">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EDIT PROFILE MODAL ══ -->
+<div id="editProfileModal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-lg w-full shadow-2xl max-h-[85vh] overflow-y-auto">
+    <div class="p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b">
+        <h3 class="font-bold">Edit Profile</h3>
+        <button onclick="closeEditProfile()" class="text-slate-400 hover:text-black">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="space-y-3">
+        <input id="editName" type="text" placeholder="Full name *" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+        <input id="editHeadline" type="text" placeholder="Headline" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+        <input id="editLocation" type="text" placeholder="Location" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+        <input id="editIndustry" type="text" placeholder="Industry (e.g. Technology)" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+        <input id="editWebsite" type="url" placeholder="Website URL" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+        <select id="editPronouns" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue text-li-muted">
+          <option value="">Pronouns</option>
+          <option value="he/him">He/Him</option>
+          <option value="she/her">She/Her</option>
+          <option value="they/them">They/Them</option>
+        </select>
+        <textarea id="editAbout" rows="4" placeholder="Tell your story..." class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue resize-none"></textarea>
+      </div>
+      <div class="flex justify-end pt-2 border-t">
+        <button onclick="saveProfile()" class="bg-li-blue hover:bg-li-hover text-white font-semibold text-sm px-5 py-2 rounded-full transition">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD EXPERIENCE MODAL ══ -->
+<div id="addExpModal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-lg w-full shadow-2xl max-h-[85vh] overflow-y-auto">
+    <div class="p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b">
+        <h3 class="font-bold">Add Experience</h3>
+        <button onclick="document.getElementById('addExpModal').classList.add('hidden')" class="text-slate-400 hover:text-black"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      </div>
+      <input id="expTitle" type="text" placeholder="Title *" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      <input id="expCompany" type="text" placeholder="Company *" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      <select id="expType" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+        <option>Full-time</option><option>Part-time</option><option>Self-employed</option><option>Freelance</option><option>Contract</option><option>Internship</option>
+      </select>
+      <input id="expLocation" type="text" placeholder="Location" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      <div class="grid grid-cols-2 gap-3">
+        <input id="expStart" type="month" class="border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+        <input id="expEnd" type="month" class="border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      </div>
+      <label class="flex items-center space-x-2 text-sm text-li-muted"><input type="checkbox" id="expCurrent" onchange="document.getElementById('expEnd').disabled=this.checked"><span>I currently work here</span></label>
+      <textarea id="expDesc" rows="3" placeholder="Description" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue resize-none"></textarea>
+      <div class="flex justify-end pt-2 border-t">
+        <button onclick="saveExperience()" class="bg-li-blue hover:bg-li-hover text-white font-semibold text-sm px-5 py-2 rounded-full transition">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD EDUCATION MODAL ══ -->
+<div id="addEduModal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-lg w-full shadow-2xl max-h-[85vh] overflow-y-auto">
+    <div class="p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b">
+        <h3 class="font-bold">Add Education</h3>
+        <button onclick="document.getElementById('addEduModal').classList.add('hidden')" class="text-slate-400 hover:text-black"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      </div>
+      <input id="eduSchool" type="text" placeholder="School *" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      <input id="eduDegree" type="text" placeholder="Degree" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      <input id="eduField" type="text" placeholder="Field of study" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      <div class="grid grid-cols-2 gap-3">
+        <input id="eduStartYear" type="number" placeholder="Start year" min="1950" max="2030" class="border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+        <input id="eduEndYear" type="number" placeholder="End year" min="1950" max="2035" class="border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      </div>
+      <input id="eduGrade" type="text" placeholder="Grade / CGPA" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      <textarea id="eduActivities" rows="2" placeholder="Activities and societies" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue resize-none"></textarea>
+      <div class="flex justify-end pt-2 border-t">
+        <button onclick="saveEducation()" class="bg-li-blue hover:bg-li-hover text-white font-semibold text-sm px-5 py-2 rounded-full transition">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD SKILL MODAL ══ -->
+<div id="addSkillModal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+    <div class="flex items-center justify-between pb-3 border-b">
+      <h3 class="font-bold">Add Skill</h3>
+      <button onclick="document.getElementById('addSkillModal').classList.add('hidden')" class="text-slate-400 hover:text-black"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    </div>
+    <input id="skillName" type="text" placeholder="Skill name (e.g. React.js)" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+    <div class="flex justify-end pt-2 border-t">
+      <button onclick="saveSkill()" class="bg-li-blue hover:bg-li-hover text-white font-semibold text-sm px-5 py-2 rounded-full transition">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD CERTIFICATION MODAL ══ -->
+<div id="addCertModal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-lg w-full shadow-2xl max-h-[85vh] overflow-y-auto">
+    <div class="p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b">
+        <h3 class="font-bold">Add License / Certification</h3>
+        <button onclick="document.getElementById('addCertModal').classList.add('hidden')" class="text-slate-400 hover:text-black"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      </div>
+      <input id="certName" type="text" placeholder="Name *" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      <input id="certOrg" type="text" placeholder="Issuing organization *" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      <div class="grid grid-cols-2 gap-3">
+        <input id="certIssue" type="month" placeholder="Issue date" class="border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+        <input id="certExpire" type="month" placeholder="Expiration date" class="border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      </div>
+      <input id="certId" type="text" placeholder="Credential ID" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      <input id="certUrl" type="url" placeholder="Credential URL" class="w-full border border-slate-300 rounded px-3 py-2.5 text-sm focus:outline-none focus:border-li-blue">
+      <div class="flex justify-end pt-2 border-t">
+        <button onclick="saveCertification()" class="bg-li-blue hover:bg-li-hover text-white font-semibold text-sm px-5 py-2 rounded-full transition">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REPOST MODAL ══ -->
+<div id="repostModal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+    <div class="flex items-center justify-between pb-3 border-b">
+      <h3 class="font-bold">Repost</h3>
+      <button onclick="closeRepostModal()" class="text-slate-400 hover:text-black"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    </div>
+    <textarea id="repostThoughts" rows="3" placeholder="What are your thoughts on this? (Optional)" class="w-full border border-slate-200 p-3 rounded text-sm focus:outline-none focus:ring-1 focus:ring-li-blue resize-none"></textarea>
+    <div id="repostOriginalPreview" class="border border-li-border rounded-lg p-3 bg-slate-50 text-xs"></div>
+    <div class="flex justify-end space-x-2 pt-2 border-t">
+      <button onclick="submitRepost(false)" class="text-li-muted hover:text-li-text font-semibold text-sm px-4 py-2 rounded-full border border-li-border hover:bg-slate-50 transition">Instant Repost</button>
+      <button onclick="submitRepost(true)" class="bg-li-blue hover:bg-li-hover text-white font-semibold text-sm px-5 py-2 rounded-full transition">Repost with thoughts</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SEND POST IN MESSAGE MODAL ══ -->
+<div id="sendPostModal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
+    <div class="flex items-center justify-between pb-3 border-b">
+      <h3 class="font-bold">Send in message</h3>
+      <button onclick="closeSendPostModal()" class="text-slate-400 hover:text-black"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    </div>
+    <div>
+      <label class="text-xs text-li-muted block mb-1">Send to:</label>
+      <select id="sendPostRecipient" class="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-li-blue"></select>
+    </div>
+    <textarea id="sendPostNote" rows="2" placeholder="Write a note... (Optional)" class="w-full border border-slate-200 p-2.5 rounded text-sm focus:outline-none focus:ring-1 focus:ring-li-blue resize-none"></textarea>
+    <div class="flex justify-end pt-2 border-t">
+      <button onclick="submitSendPost()" class="bg-li-blue hover:bg-li-hover text-white font-semibold text-sm px-5 py-2 rounded-full transition">Send</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+
+<!-- ══ REACTION DETAILS MODAL ══ -->
+<div id="reactionListModal" class="fixed inset-0 modal-bg z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-md w-full shadow-2xl max-h-[80vh] overflow-hidden flex flex-col">
+    <div class="p-4 border-b border-li-border flex items-center justify-between">
+      <h3 class="font-bold text-sm">Reactions</h3>
+      <button onclick="closeReactionListModal()" class="text-slate-400 hover:text-black">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="reactionTabs" class="flex space-x-2 px-4 py-2 border-b border-slate-100 text-xs overflow-x-auto bg-slate-50"></div>
+    <div id="reactionUsersList" class="flex-1 overflow-y-auto p-4 space-y-3 divide-y divide-slate-100"></div>
+  </div>
+</div>
+
+</body>
+</html>

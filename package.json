@@ -1,0 +1,16 @@
+{
+  "name": "opentonetwork",
+  "version": "2.0.0",
+  "description": "LinkedIn clone rebuilt from REA reverse engineering - real API contracts, real DOM structure",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "wakaru": "^1.14.0"
+  }
+}

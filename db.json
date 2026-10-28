@@ -1,0 +1,735 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "name": "Gowtham Sanjay",
+      "email": "gowtham@example.com",
+      "password": "$2a$10$XXGkaRbODmEMddL7XAG.N.TqxVLuY29CWcQPygRhVXWXaOS7TT1NK",
+      "headline": "Software Engineer & Agent Systems Specialist",
+      "location": "Bengaluru, India",
+      "connections": 487,
+      "countryCode": "in",
+      "joinedAt": "2024-01-15",
+      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      "verified": true,
+      "premium": true,
+      "openToWork": true
+    },
+    {
+      "id": "u2",
+      "name": "Priya Sharma",
+      "email": "priya@example.com",
+      "password": "$2a$10$xRsUbvJDmEShfpDuGG5.ee3Dz0K97K.SMMqXgMQBQGSaH9xgJiNJq",
+      "headline": "Senior Product Manager @ Infosys",
+      "location": "Mumbai, India",
+      "connections": 1243,
+      "countryCode": "in",
+      "joinedAt": "2023-06-20",
+      "avatarUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+      "verified": true,
+      "premium": false,
+      "openToWork": false
+    },
+    {
+      "id": "u3",
+      "name": "Alex Chen",
+      "email": "alex@example.com",
+      "password": "$2a$10$7sWEOPQ8nUq/FOqa1dB8Oe2atj4IjV9p5LCE2WB4zoSaSiVLsQT.G",
+      "headline": "Staff AI Engineer @ Google",
+      "location": "San Francisco, CA",
+      "connections": 892,
+      "countryCode": "us",
+      "joinedAt": "2022-09-10",
+      "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      "verified": true,
+      "premium": true,
+      "openToWork": false
+    },
+    {
+      "id": "u4",
+      "name": "Elena Rostova",
+      "email": "elena@example.com",
+      "password": "$2a$10$RY6jD0qEcdVIfhPNzmH6wOGKhkb/24VG4Yln58OO8qbd8IgaIpRD2",
+      "headline": "VP of Product Innovation",
+      "location": "Berlin, Germany",
+      "connections": 2341,
+      "countryCode": "de",
+      "joinedAt": "2021-03-05",
+      "avatarUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+      "verified": false,
+      "premium": true,
+      "openToWork": false
+    },
+    {
+      "id": "u5",
+      "name": "Rahul Verma",
+      "email": "rahul@example.com",
+      "password": "$2a$10$WtzRNfOKhVJxYfozngAo8upMsLqiMw1RVcbowbVKKGot8kLYrtN8a",
+      "headline": "Full Stack Developer | React | Node.js",
+      "location": "Hyderabad, India",
+      "connections": 329,
+      "countryCode": "in",
+      "joinedAt": "2024-08-01",
+      "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      "verified": false,
+      "premium": false,
+      "openToWork": true
+    }
+  ],
+  "posts": [
+    {
+      "id": "p1793201460183",
+      "authorId": "u1",
+      "content": "Fascinating perspective on AI tooling!",
+      "repostId": "p1",
+      "postType": "repost",
+      "likes": 1,
+      "comments": 0,
+      "shares": 0,
+      "createdAt": "2026-10-28T15:31:00.183Z",
+      "likedBy": [],
+      "reactions": {
+        "like": [],
+        "celebrate": [
+          "u1"
+        ],
+        "support": [],
+        "love": [],
+        "insightful": [],
+        "funny": []
+      }
+    },
+    {
+      "id": "p1",
+      "authorId": "u2",
+      "content": "🚀 Excited to share that our team just shipped a major feature using AI-assisted code reviews! The productivity gains are real — 40% fewer bugs in QA. What tools is your team using for AI-assisted development?",
+      "likes": 6,
+      "comments": 23,
+      "shares": 9,
+      "createdAt": "2026-10-28T13:30:58.062Z",
+      "reactions": {
+        "like": [
+          "u5"
+        ],
+        "celebrate": [
+          "u3",
+          "u4"
+        ],
+        "support": [],
+        "love": [
+          "u2"
+        ],
+        "insightful": [
+          "u3",
+          "u1"
+        ],
+        "funny": []
+      },
+      "likedBy": [
+        "u5"
+      ]
+    },
+    {
+      "id": "p2",
+      "authorId": "u3",
+      "content": "Hot take: The best engineers I've hired in 2026 are those who know *when NOT to use AI*. Knowing the boundaries of these tools is the real skill.\n\nWhat do you think? 👇",
+      "likes": 891,
+      "comments": 167,
+      "shares": 44,
+      "createdAt": "2026-10-28T10:30:58.063Z",
+      "reactions": {
+        "like": [
+          "u1",
+          "u2"
+        ],
+        "celebrate": [],
+        "support": [
+          "u4"
+        ],
+        "love": [],
+        "insightful": [
+          "u1",
+          "u2",
+          "u5"
+        ],
+        "funny": []
+      }
+    },
+    {
+      "id": "p3",
+      "authorId": "u4",
+      "content": "Just wrapped up our Q3 planning. Key insight: teams that do weekly async updates are 2x more aligned than those doing daily syncs. Less noise, more signal. 📊",
+      "likes": 334,
+      "comments": 58,
+      "shares": 19,
+      "createdAt": "2026-10-27T15:30:58.063Z",
+      "reactions": {
+        "like": [
+          "u2",
+          "u3"
+        ],
+        "celebrate": [
+          "u1"
+        ],
+        "support": [],
+        "love": [
+          "u3"
+        ],
+        "insightful": [
+          "u5"
+        ],
+        "funny": []
+      }
+    },
+    {
+      "id": "p4",
+      "authorId": "u5",
+      "content": "Open to work! Looking for Full Stack roles (React + Node.js). 3 years experience, open to remote. If you're hiring or know someone who is, please tag them below. Thanks 🙏 #OpenToWork #hiring",
+      "likes": 78,
+      "comments": 41,
+      "shares": 12,
+      "createdAt": "2026-10-26T15:30:58.063Z",
+      "reactions": {
+        "like": [
+          "u1"
+        ],
+        "celebrate": [],
+        "support": [
+          "u1",
+          "u2",
+          "u3",
+          "u4"
+        ],
+        "love": [],
+        "insightful": [],
+        "funny": []
+      }
+    },
+    {
+      "id": "p5",
+      "authorId": "u1",
+      "content": "Just spent the weekend analyzing distributed frontend architecture and performance metrics. The way modern platforms handle client-side telemetry and distributed CDN routing is fascinating. Will write a full breakdown soon. #systemdesign #webdev",
+      "likes": 8,
+      "comments": 37,
+      "shares": 15,
+      "createdAt": "2026-10-25T15:30:58.063Z",
+      "reactions": {
+        "like": [
+          "u2",
+          "u3",
+          "u4",
+          "u5",
+          "u1"
+        ],
+        "celebrate": [
+          "u2"
+        ],
+        "support": [],
+        "love": [],
+        "insightful": [
+          "u3",
+          "u4"
+        ],
+        "funny": []
+      },
+      "likedBy": [
+        "u2",
+        "u3",
+        "u4",
+        "u5",
+        "u1"
+      ]
+    }
+  ],
+  "jobs": [
+    {
+      "id": "j1",
+      "title": "Senior Software Engineer",
+      "company": "Google",
+      "location": "Bengaluru, India",
+      "type": "Full-time",
+      "level": "Senior",
+      "remote": "Hybrid",
+      "postedAt": "2026-10-27T15:30:58.063Z",
+      "applicants": 284,
+      "description": "Join Google's Core Engineering team. Work on large-scale distributed systems.",
+      "skills": [
+        "Go",
+        "Python",
+        "Kubernetes",
+        "GCP"
+      ]
+    },
+    {
+      "id": "j2",
+      "title": "Product Manager - AI",
+      "company": "Microsoft",
+      "location": "Hyderabad, India",
+      "type": "Full-time",
+      "level": "Mid",
+      "remote": "Hybrid",
+      "postedAt": "2026-10-26T15:30:58.063Z",
+      "applicants": 142,
+      "description": "Drive product strategy for AI-powered features across Microsoft 365.",
+      "skills": [
+        "Product Strategy",
+        "AI/ML",
+        "Data Analysis",
+        "Agile"
+      ]
+    },
+    {
+      "id": "j3",
+      "title": "Full Stack Developer",
+      "company": "Razorpay",
+      "location": "Remote",
+      "type": "Full-time",
+      "level": "Mid",
+      "remote": "Remote",
+      "postedAt": "2026-10-25T15:30:58.063Z",
+      "applicants": 98,
+      "description": "Build the next generation of payment infrastructure. React, Node, PostgreSQL.",
+      "skills": [
+        "React",
+        "Node.js",
+        "PostgreSQL",
+        "Redis"
+      ]
+    },
+    {
+      "id": "j4",
+      "title": "DevOps Engineer",
+      "company": "Infosys",
+      "location": "Pune, India",
+      "type": "Full-time",
+      "level": "Junior",
+      "remote": "On-site",
+      "postedAt": "2026-10-24T15:30:58.063Z",
+      "applicants": 67,
+      "description": "Manage CI/CD pipelines, Kubernetes clusters, and cloud infrastructure.",
+      "skills": [
+        "Kubernetes",
+        "Jenkins",
+        "AWS",
+        "Terraform"
+      ]
+    },
+    {
+      "id": "j5",
+      "title": "Data Scientist",
+      "company": "Flipkart",
+      "location": "Bengaluru, India",
+      "type": "Full-time",
+      "level": "Senior",
+      "remote": "Hybrid",
+      "postedAt": "2026-10-23T15:30:58.063Z",
+      "applicants": 213,
+      "description": "Build ML models for product recommendations and search ranking.",
+      "skills": [
+        "Python",
+        "PyTorch",
+        "Spark",
+        "SQL"
+      ]
+    },
+    {
+      "id": "j6",
+      "title": "UX Designer",
+      "company": "Swiggy",
+      "location": "Bengaluru, India",
+      "type": "Full-time",
+      "level": "Mid",
+      "remote": "Hybrid",
+      "postedAt": "2026-10-22T15:30:58.063Z",
+      "applicants": 55,
+      "description": "Design intuitive food delivery experiences for 50M+ users.",
+      "skills": [
+        "Figma",
+        "User Research",
+        "Prototyping",
+        "Design Systems"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "u1",
+      "to": "u2",
+      "status": "connected",
+      "at": "2024-02-01"
+    },
+    {
+      "from": "u1",
+      "to": "u3",
+      "status": "pending",
+      "at": "2026-10-20"
+    }
+  ],
+  "messages": [
+    {
+      "id": "m1",
+      "from": "u2",
+      "to": "u1",
+      "content": "Hi Gowtham! I saw your post about distributed architectures. Really impressive work! Would love to chat about it.",
+      "read": true,
+      "createdAt": "2026-10-28T13:30:58.063Z"
+    },
+    {
+      "id": "m2",
+      "from": "u1",
+      "to": "u2",
+      "content": "Thanks Priya! Yes, analyzing performance bottlenecks across client-side pipelines is a passion of mine. Happy to walk you through it.",
+      "read": true,
+      "createdAt": "2026-10-28T14:00:58.063Z"
+    },
+    {
+      "id": "m3",
+      "from": "u2",
+      "to": "u1",
+      "content": "That would be amazing! Are you free for a quick call this week?",
+      "read": true,
+      "createdAt": "2026-10-28T14:30:58.063Z"
+    },
+    {
+      "id": "m4",
+      "from": "u3",
+      "to": "u1",
+      "content": "Hey Gowtham, we have an opening on the AI team at Google. Your agent systems work looks like a great fit. Interested?",
+      "read": true,
+      "createdAt": "2026-10-28T10:30:58.063Z"
+    },
+    {
+      "id": "m5",
+      "from": "u4",
+      "to": "u1",
+      "content": "Your latest architecture write-up is fascinating. We are exploring similar approaches for enterprise scale. Let's connect!",
+      "read": true,
+      "createdAt": "2026-10-28T07:30:58.063Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "n1",
+      "userId": "u1",
+      "type": "connection_request",
+      "from": "u4",
+      "message": "Elena Rostova wants to connect",
+      "read": true,
+      "createdAt": "2026-10-28T14:30:58.063Z"
+    },
+    {
+      "id": "n2",
+      "userId": "u1",
+      "type": "post_like",
+      "from": "u3",
+      "message": "Alex Chen liked your post",
+      "read": true,
+      "createdAt": "2026-10-28T13:30:58.063Z"
+    },
+    {
+      "id": "n1793201460178",
+      "userId": "u2",
+      "type": "reaction",
+      "from": "u1",
+      "message": "Gowtham Sanjay reacted to your post",
+      "read": false,
+      "createdAt": "2026-10-28T15:31:00.178Z"
+    },
+    {
+      "id": "n1793201460181",
+      "userId": "u2",
+      "type": "reaction",
+      "from": "u1",
+      "message": "Gowtham Sanjay reacted to your post",
+      "read": false,
+      "createdAt": "2026-10-28T15:31:00.181Z"
+    }
+  ],
+  "comments": [
+    {
+      "id": "cm1",
+      "postId": "p1",
+      "authorId": "u1",
+      "content": "This is great! What AI tools are you using for code reviews?",
+      "likes": 5,
+      "likedBy": [
+        "u2",
+        "u3"
+      ],
+      "createdAt": "2026-10-28T14:00:58.063Z"
+    },
+    {
+      "id": "cm2",
+      "postId": "p1",
+      "authorId": "u3",
+      "content": "We've been using similar tools at Google. The key is combining AI review with human judgment.",
+      "likes": 12,
+      "likedBy": [
+        "u1",
+        "u2",
+        "u4"
+      ],
+      "createdAt": "2026-10-28T14:30:58.063Z"
+    },
+    {
+      "id": "cm3",
+      "postId": "p2",
+      "authorId": "u4",
+      "content": "Totally agree Alex. Knowing when NOT to use a tool is an underrated skill in 2026.",
+      "likes": 45,
+      "likedBy": [
+        "u1",
+        "u2",
+        "u5"
+      ],
+      "createdAt": "2026-10-28T11:30:58.063Z"
+    },
+    {
+      "id": "cm4",
+      "postId": "p2",
+      "authorId": "u1",
+      "content": "Strong agree. Blindly applying AI to everything creates more problems than it solves.",
+      "likes": 22,
+      "likedBy": [
+        "u3",
+        "u4"
+      ],
+      "createdAt": "2026-10-28T12:30:58.063Z"
+    },
+    {
+      "id": "cm5",
+      "postId": "p5",
+      "authorId": "u2",
+      "content": "Can't wait to read the full breakdown! Looking forward to your article.",
+      "likes": 8,
+      "likedBy": [
+        "u1"
+      ],
+      "createdAt": "2026-10-26T03:30:58.063Z"
+    },
+    {
+      "id": "cm6",
+      "postId": "p5",
+      "authorId": "u5",
+      "content": "This is the kind of deep-dive content LinkedIn needs more of. Following for updates!",
+      "likes": 3,
+      "likedBy": [],
+      "createdAt": "2026-10-26T15:30:58.063Z"
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp1",
+      "userId": "u1",
+      "title": "Software Engineer & Agent Systems Specialist",
+      "company": "Freelance",
+      "location": "Bengaluru, India",
+      "startDate": "2024-01",
+      "endDate": "",
+      "current": true,
+      "description": "Building AI-powered agent systems, distributed cloud platforms, and developing high-performance full-stack applications.",
+      "employmentType": "Self-employed"
+    },
+    {
+      "id": "exp2",
+      "userId": "u1",
+      "title": "Full Stack Developer Intern",
+      "company": "TechCorp India",
+      "location": "Bengaluru, India",
+      "startDate": "2023-06",
+      "endDate": "2023-12",
+      "current": false,
+      "description": "Built React + Node.js applications. Worked on microservices architecture and CI/CD pipelines.",
+      "employmentType": "Internship"
+    },
+    {
+      "id": "exp3",
+      "userId": "u3",
+      "title": "Staff AI Engineer",
+      "company": "Google",
+      "location": "San Francisco, CA",
+      "startDate": "2022-09",
+      "endDate": "",
+      "current": true,
+      "description": "Leading AI infrastructure initiatives. Building large-scale ML systems for Google Cloud AI products.",
+      "employmentType": "Full-time"
+    },
+    {
+      "id": "exp4",
+      "userId": "u2",
+      "title": "Senior Product Manager",
+      "company": "Infosys",
+      "location": "Mumbai, India",
+      "startDate": "2023-06",
+      "endDate": "",
+      "current": true,
+      "description": "Driving product strategy for enterprise AI solutions. Managing a team of 12 engineers.",
+      "employmentType": "Full-time"
+    }
+  ],
+  "education": [
+    {
+      "id": "edu1",
+      "userId": "u1",
+      "school": "Bengaluru University of Technology",
+      "degree": "Bachelor of Technology",
+      "fieldOfStudy": "Computer Science & Engineering",
+      "startYear": "2020",
+      "endYear": "2024",
+      "grade": "8.7 CGPA",
+      "activities": "Coding Club President, Hackathon Winner 2023"
+    },
+    {
+      "id": "edu2",
+      "userId": "u3",
+      "school": "Stanford University",
+      "degree": "Master of Science",
+      "fieldOfStudy": "Artificial Intelligence",
+      "startYear": "2020",
+      "endYear": "2022",
+      "grade": "3.95 GPA",
+      "activities": "AI Lab Research Assistant"
+    },
+    {
+      "id": "edu3",
+      "userId": "u2",
+      "school": "Indian Institute of Management, Ahmedabad",
+      "degree": "MBA",
+      "fieldOfStudy": "Product Management & Strategy",
+      "startYear": "2021",
+      "endYear": "2023",
+      "grade": "",
+      "activities": "Case Competition Winner"
+    }
+  ],
+  "skills": [
+    {
+      "id": "sk1",
+      "userId": "u1",
+      "name": "JavaScript",
+      "endorsements": 12,
+      "endorsedBy": [
+        "u2",
+        "u3",
+        "u5"
+      ]
+    },
+    {
+      "id": "sk2",
+      "userId": "u1",
+      "name": "React.js",
+      "endorsements": 8,
+      "endorsedBy": [
+        "u2",
+        "u5"
+      ]
+    },
+    {
+      "id": "sk3",
+      "userId": "u1",
+      "name": "Node.js",
+      "endorsements": 10,
+      "endorsedBy": [
+        "u3",
+        "u5"
+      ]
+    },
+    {
+      "id": "sk4",
+      "userId": "u1",
+      "name": "Python",
+      "endorsements": 6,
+      "endorsedBy": [
+        "u3"
+      ]
+    },
+    {
+      "id": "sk5",
+      "userId": "u1",
+      "name": "Reverse Engineering",
+      "endorsements": 3,
+      "endorsedBy": []
+    },
+    {
+      "id": "sk6",
+      "userId": "u1",
+      "name": "AI/ML",
+      "endorsements": 4,
+      "endorsedBy": [
+        "u3"
+      ]
+    },
+    {
+      "id": "sk8",
+      "userId": "u3",
+      "name": "Machine Learning",
+      "endorsements": 45,
+      "endorsedBy": [
+        "u1",
+        "u2",
+        "u4"
+      ]
+    },
+    {
+      "id": "sk9",
+      "userId": "u3",
+      "name": "Python",
+      "endorsements": 38,
+      "endorsedBy": [
+        "u1",
+        "u2"
+      ]
+    },
+    {
+      "id": "sk10",
+      "userId": "u3",
+      "name": "TensorFlow",
+      "endorsements": 30,
+      "endorsedBy": [
+        "u1"
+      ]
+    }
+  ],
+  "certifications": [
+    {
+      "id": "cert1",
+      "userId": "u1",
+      "name": "Google Cloud Professional Cloud Architect",
+      "organization": "Google Cloud",
+      "issueDate": "2024-06",
+      "expirationDate": "2026-06",
+      "credentialId": "GCP-PCA-2024-0847",
+      "credentialUrl": ""
+    },
+    {
+      "id": "cert2",
+      "userId": "u1",
+      "name": "AWS Solutions Architect Associate",
+      "organization": "Amazon Web Services",
+      "issueDate": "2024-03",
+      "expirationDate": "2027-03",
+      "credentialId": "AWS-SAA-2024-1234",
+      "credentialUrl": ""
+    }
+  ],
+  "languages": [
+    {
+      "id": "lang1",
+      "userId": "u1",
+      "name": "English",
+      "proficiency": "Professional working"
+    },
+    {
+      "id": "lang2",
+      "userId": "u1",
+      "name": "Tamil",
+      "proficiency": "Native"
+    },
+    {
+      "id": "lang3",
+      "userId": "u1",
+      "name": "Hindi",
+      "proficiency": "Professional working"
+    }
+  ]
+}
